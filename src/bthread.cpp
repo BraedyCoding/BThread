@@ -1,18 +1,14 @@
 #include "bthread.hpp"
 #include "scheduler.hpp"
+#include <functional>
 
-//entry point: call on the create function which adds
-//the thread to the schedulers thread list
-int bthread_create(bthread_func f) {
-    Scheduler::add_thread(f);
-    return Scheduler::self();
+// Create thread (template must live in header normally,
+// but we keep it here since it will be included where used)
+template <typename Func, typename... Args>
+void bthread_create(Func f, Args... args) {
+    Scheduler::add_thread(std::bind(f, args...)); //right away we bind so we don't have to keep making everything templates 
 }
 
-void bthread_yield() {
-    Scheduler::yield();
-}
-
-//when all threads are added, call run to start the scheduler
 void bthread_run() {
     Scheduler::run();
 }

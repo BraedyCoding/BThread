@@ -1,12 +1,27 @@
 #include <stdio.h>
 #include "bthread.hpp"
 #include "scheduler.hpp"
+#include <functional>
 
 
 
 //this is the structure of how we will run the bthreads
-void thread1() { /*...*/ }
-void thread2() { /*...*/ }
+void thread1() {  
+    while(true) {
+        printf("Thread 1 is running\n");
+        fflush(stdout);
+        Scheduler::yield(Scheduler::threads[Scheduler::self()]);
+    }
+}
+
+void thread2() { 
+    while(true) {
+        printf("Thread 2 is running\n");
+        fflush(stdout);
+        Scheduler::yield(Scheduler::threads[Scheduler::self()]);
+    }
+}
+
 
 int main() {
 

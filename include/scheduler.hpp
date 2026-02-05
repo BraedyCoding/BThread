@@ -1,28 +1,21 @@
 #pragma once
-#include <vector>
 
+#include <vector>
+#include <csetjmp>
+#include <functional>
+#include "bthread.hpp"
 
 class Scheduler {
 public:
-    static void add_thread(bthread_func func);
-    static void yield();
+    static void add_thread(std::function<void()> f);
     static void run();
+    static void yield(BThread& t);
     static int self();
+    static std::vector<BThread> threads;
 
 private:
-    struct BThread {       // now private to Scheduler class
-        jmp_buf context; //this is the context for our thread
-        //so when we switch back, we can restore it
-        char* stack;
-        bthread_func func;
-        enum State { READY, RUNNING, FINISHED } state;
-        int id;
-    };
-
-    static std::vector<BThread> threads; // private vector
     static int cur_running_thread_id;
-
-    //this is our scheduler context to switch back to the scheduler
     static jmp_buf scheduler_context;
-};
 
+    static void schedule();
+};
